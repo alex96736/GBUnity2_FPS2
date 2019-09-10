@@ -24,6 +24,7 @@ public abstract class BaseWeapon : BaseObject
     //protected Light _mazzleLight;
     [SerializeField]protected GameObject _hitParticle;
 
+    [Header("Информация о боезапасе")]
     // Вывод информации о боезапасе
     [SerializeField] protected Text UIText_Bullets;
 

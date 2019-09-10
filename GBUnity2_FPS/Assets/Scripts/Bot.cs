@@ -27,7 +27,7 @@ public class Bot : Unit
 
     // точки для патрулирования
     private List<Vector3> _wayPoints = new List<Vector3>();
-    
+
     private int _wayCount;
 
     // объект, хранящий точки патрулирования 
@@ -41,8 +41,21 @@ public class Bot : Unit
     private bool _patrol;
     private bool _shooting;
 
-    private float _maxAngle = 30;
-    private float _maxRadius = 20;
+    [Header("Параметры поля зрения бота")]
+    [Range(0, 90)]
+    [SerializeField] private float _maxAngle = 90;
+    [SerializeField] private float _maxRadius = 20;
+
+    [Header("Массив видимых целей бота")]
+    // хранения видимый целей
+    [SerializeField] private List<Transform> _visibleTargets = new List<Transform>();
+
+
+    [Header("Маски слоей объектов для бота")]
+    // маски слоев
+    [SerializeField] private LayerMask targetMask;
+    [SerializeField] private LayerMask obstacleMask;
+
 
     private void OnDrawGizmos()
     {
@@ -77,6 +90,8 @@ public class Bot : Unit
         {
             _wayPoints.Add(t.position);
         }
+
+        StartCoroutine("FindTargets", 2);
     }
 
     private void ChangeWaypoint()
@@ -91,18 +106,45 @@ public class Bot : Unit
         }
     }
 
+    private void FindVisibleTargets()
+    {
+        _visibleTargets.Clear();
+        Collider[] targetsInViewRadius = Physics.OverlapSphere(Position, _maxRadius, targetMask);
+        for (int i = 0; i < targetsInViewRadius.Length; i++)
+        {
+            Transform target = targetsInViewRadius[i].transform;
+
+            Vector3 dirToTarget = (target.position - Position).normalized;
+
+            if (Vector3.Angle(transform.forward, dirToTarget)<_maxAngle/2)
+            {
+                float targetDistance = Vector3.Distance(Position, target.position);
+                if (!Physics.Raycast(Position, dirToTarget, targetDistance, obstacleMask))
+                {
+                    _visibleTargets.Add(target);
+                    _patrol = false;
+                    _agent.stoppingDistance = 5f;
+                    _agent.SetDestination(target.position);
+                }
+            }
+            else
+            {
+                _patrol = true;
+            }
+        }
+    }
+
+    IEnumerator FindTargets(float delay)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(delay);
+            FindVisibleTargets();
+        }
+    }
 
     void Update()
     {
-        _patrol = true;
-        foreach (Collider collision in Physics.OverlapSphere(_GameObjectTransform.position, _maxRadius))
-        {
-            if (collision.tag == "Player")
-            {
-                _patrol = false;
-            }
-        }
-
         if (_agent)
         {
             if (_agent.remainingDistance > _agent.stoppingDistance)
@@ -137,23 +179,6 @@ public class Bot : Unit
                     _agent.stoppingDistance = 5f;
                     _agent.SetDestination(_playerPos.position);
                 }
-            }
-            else
-            {
-                _agent.stoppingDistance = 5f;
-                _agent.SetDestination(_playerPos.position);
-
-                Vector3 RayPos = new Vector3(Position.x, Position.y + 1, Position.z);
-                Ray ray = new Ray(RayPos, transform.forward);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, _maxRadius))
-                {
-                    if (hit.collider.tag == "Player")
-                    {
-                        Debug.Log("Hit Player");
-                    }
-                }
-
             }
         }
     }

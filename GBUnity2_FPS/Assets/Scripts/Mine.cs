@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class Mine : BaseObject
 {
+    [Header("Радиус взрыва мины")]
     // радиус взрыва мины
     [SerializeField] private float _radius;
     // сила отброса от взрыва

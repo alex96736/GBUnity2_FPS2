@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerControllerPlus : Unit
 {
+    [Header("Информация о здоровье игрока")]
     // Вывод информации о здоровье
     [SerializeField] protected Text UIText_Health;
 
