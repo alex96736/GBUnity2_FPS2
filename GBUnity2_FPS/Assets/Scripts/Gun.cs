@@ -16,6 +16,7 @@ public class Gun : BaseWeapon
 
     private float _destructTime = 10;
 
+    [Header("Параметры партонов оружия")]
     // кол-во патронов, которое помещяется в магазин
     [SerializeField] private int _magazine = 30;
     // текущее количество патронов в магазине

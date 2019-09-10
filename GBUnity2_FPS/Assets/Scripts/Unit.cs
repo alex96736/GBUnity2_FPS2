@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Unit : BaseObject, ISetDamage, IGetHealth
 {
+    [Header("Здоровье персонажа")]
     // текущее здоровье персонажа
     [SerializeField] private int _health;
     // базовое здоровье персонажа

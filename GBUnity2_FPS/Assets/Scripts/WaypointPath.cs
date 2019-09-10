@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class WaypointPath : MonoBehaviour
 {
+    [Header("Массив точек патрулирования")]
     public List<Transform> nodes = new List<Transform>();
     public Transform[] pathTransform;
 
+    [Header("Текущая активная точка")]
     public Vector3 currNode;
+    [Header("Предыдущая активная точка")]
     public Vector3 prevNode;
 
     private void OnDrawGizmos()
