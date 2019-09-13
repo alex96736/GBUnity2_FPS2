@@ -19,6 +19,5 @@ public class PlayerControllerPlus : Unit
     private void Update()
     {
         UIText_Health.text = Health.ToString();
-        Debug.Log($"PlayerHealth: {Health}");
     }
 }

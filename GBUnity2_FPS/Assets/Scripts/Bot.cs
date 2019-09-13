@@ -37,8 +37,9 @@ public class Bot : Unit
     private float _timeWait = 2f;
     private float _timeout;
 
+    [Header("Состояние бота")]
     // состояния бота
-    private bool _patrol;
+    [SerializeField] private bool _patrol;
     private bool _shooting;
 
     [Header("Параметры поля зрения бота")]
@@ -91,7 +92,7 @@ public class Bot : Unit
             _wayPoints.Add(t.position);
         }
 
-        StartCoroutine("FindTargets", 2);
+        StartCoroutine("FindTargets", 1);
     }
 
     private void ChangeWaypoint()
@@ -118,9 +119,11 @@ public class Bot : Unit
 
             if (Vector3.Angle(transform.forward, dirToTarget)<_maxAngle/2)
             {
+                Debug.Log("Враг в поле зрения");
                 float targetDistance = Vector3.Distance(Position, target.position);
                 if (!Physics.Raycast(Position, dirToTarget, targetDistance, obstacleMask))
                 {
+                    Debug.Log("Добавляем цель");
                     _visibleTargets.Add(target);
                     _patrol = false;
                     _agent.stoppingDistance = 5f;
