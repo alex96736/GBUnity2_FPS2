@@ -71,13 +71,21 @@
     <Compile Include="Assets\Scripts\Gun.cs" />
     <Compile Include="Assets\Scripts\HealthKit.cs" />
     <Compile Include="Assets\Scripts\Interface\IGetHealth.cs" />
+    <Compile Include="Assets\Scripts\Interface\ISaveData.cs" />
     <Compile Include="Assets\Scripts\Interface\ISetDamage.cs" />
     <Compile Include="Assets\Scripts\Mine.cs" />
+    <Compile Include="Assets\Scripts\Minimap.cs" />
     <Compile Include="Assets\Scripts\PlayerControllerPlus.cs" />
+    <Compile Include="Assets\Scripts\Seriliazation\JSONData.cs" />
+    <Compile Include="Assets\Scripts\Seriliazation\Player.cs" />
+    <Compile Include="Assets\Scripts\Seriliazation\StreamData.cs" />
+    <Compile Include="Assets\Scripts\Seriliazation\XMLData.cs" />
     <Compile Include="Assets\Scripts\Timer.cs" />
     <Compile Include="Assets\Scripts\Unit.cs" />
     <Compile Include="Assets\Scripts\WaypointPath.cs" />
     <None Include="Assets\DownloadAssets\Shipping Container Environment\Readme.txt" />
+    <None Include="Assets\JSONData.xml" />
+    <None Include="Assets\XMLData.xml" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/ALeX96736/GBUnity2_FPS/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

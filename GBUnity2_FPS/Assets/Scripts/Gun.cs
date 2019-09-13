@@ -124,7 +124,7 @@ public class Gun : BaseWeapon
         foreach (RaycastHit temp in hits)
         {
 
-            Debug.Log($"{i}: {temp.collider.name}");
+            //Debug.Log($"{i}: {temp.collider.name}");
             i++;
         }
     }
