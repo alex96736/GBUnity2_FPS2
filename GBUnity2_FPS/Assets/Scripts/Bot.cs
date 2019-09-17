@@ -57,6 +57,19 @@ public class Bot : Unit
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
 
+    [Header("Элементы для выстрелов")]
+    [SerializeField] protected ParticleSystem _muzzleFlash;
+    [SerializeField] protected GameObject _hitParticle;
+    // точка, из которой производится выстрел
+    [SerializeField] protected Transform _SpawnBullet;
+
+    private int _damage = 20;
+    private float _shootDistance = 1000f;
+
+    Vector3 RayPos;
+
+    
+
 
     private void OnDrawGizmos()
     {
@@ -92,7 +105,11 @@ public class Bot : Unit
             _wayPoints.Add(t.position);
         }
 
-        StartCoroutine("FindTargets", 1);
+        StartCoroutine("FindTargets", 1f);
+
+        _muzzleFlash = GetComponentInChildren<ParticleSystem>();
+        _SpawnBullet = GameObject.FindGameObjectWithTag("GunT").transform;
+
     }
 
     private void ChangeWaypoint()
@@ -119,21 +136,12 @@ public class Bot : Unit
 
             if (Vector3.Angle(transform.forward, dirToTarget)<_maxAngle/2)
             {
-                Debug.Log("Враг в поле зрения");
                 float targetDistance = Vector3.Distance(Position, target.position);
                 if (!Physics.Raycast(Position, dirToTarget, targetDistance, obstacleMask))
                 {
-                    Debug.Log("Добавляем цель");
                     _visibleTargets.Add(target);
-                    _patrol = false;
-                    _agent.stoppingDistance = 5f;
-                    _agent.SetDestination(target.position);
                 }
-            }
-            else
-            {
-                _patrol = true;
-            }
+            }  
         }
     }
 
@@ -148,6 +156,17 @@ public class Bot : Unit
 
     void Update()
     {
+        RayPos = new Vector3(Position.x, Position.y + 1, Position.z);
+
+        if (_visibleTargets.Count > 0)
+        {
+            _patrol = false;
+        }
+        else
+        {
+            _patrol = true;
+        }
+
         if (_agent)
         {
             if (_agent.remainingDistance > _agent.stoppingDistance)
@@ -183,6 +202,37 @@ public class Bot : Unit
                     _agent.SetDestination(_playerPos.position);
                 }
             }
+            else
+            {
+                _agent.stoppingDistance = 5f;
+                _agent.SetDestination(_visibleTargets[0].position);
+                Ray ray = new Ray(RayPos, transform.forward);
+                RaycastHit hit;
+                Debug.DrawRay(RayPos, transform.forward, Color.blue);
+                if (Physics.Raycast(ray, out hit, _shootDistance))
+                {
+                    if (hit.collider.tag == "Player" && !_shooting)
+                    {
+                        StartCoroutine(Shoot(hit));
+                        _shooting = true;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
         }
+    }
+
+    IEnumerator Shoot(RaycastHit playerHit)
+    {
+        yield return new WaitForSeconds(2.5f);
+        _muzzleFlash.Play();
+        playerHit.collider.GetComponent<ISetDamage>().SetDamage(_damage);
+        GameObject tempHit = Instantiate(_hitParticle, playerHit.point, Quaternion.LookRotation(playerHit.normal));
+        tempHit.transform.parent = playerHit.transform;
+        Destroy(tempHit, 0.5f);
+        _shooting = false;
     }
 }

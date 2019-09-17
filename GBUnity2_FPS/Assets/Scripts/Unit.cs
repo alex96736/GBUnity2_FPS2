@@ -25,7 +25,10 @@ public class Unit : BaseObject, ISetDamage, IGetHealth
         else
         {
             _health = 0;
-            Destroy(_GameObject);
+            if (tag != "Player")
+            {
+                Destroy(_GameObject);
+            }
         }
         Debug.Log($"Health: {_health}");
     }
